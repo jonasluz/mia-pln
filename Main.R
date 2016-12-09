@@ -39,6 +39,9 @@ csv <- read.csv2(csvname, header = FALSE, sep = "\t",  encoding = "UTF-8")
 # Retira duplicatas do dataframe
 lemmadf <- unique(csv)
 
+# Carrega biblioteca de processamento de strings.
+library(stringr)
+
 ## Função para extrair o lema das palavras de dado documento.
 lemma <- function(x, dataframe) {
 
@@ -87,7 +90,10 @@ lemma <- function(x, dataframe) {
 ## Lematizando o corpus
 #
 # Gera novo vetor de texto, lematizado.
-ldocs <- lemma(docs, lemmadf)
+	ldocs <- lemma(docs, lemmadf)
+
+# Carrega a biblioteca de mineração de texto tm
+library(tm)
 
 ## Criando corpus a partir das linhas de texto.
 #
@@ -104,8 +110,6 @@ corpus
 
 ## Preprocessamento final.
 #
-# Carrega a biblioteca de mineração de texto tm
-library(tm)
 # Remover a palavra "card" adicionada pelo TreeTagger como um marcador
 corpus <- tm_map(corpus, removeWords, c("card"))
 # Converter o corpus para letras minúsculas.
@@ -162,6 +166,9 @@ df2 <- data.frame(words=names(dt2), freq=dt2)
 # Cria uma coluna pelo nome do vetor dado.
 df$Col1 <- factor(rownames(df), levels=rownames(df))
 df2$Col1 <- factor(rownames(df2), levels=rownames(df2))
+
+# Carrega a biblioteca de geração dos gráficos.
+library(ggplot2)
 
 # Gera o gráfico dos 100 mais para os unigramas
 p <- ggplot(data=df, aes(x=Col1, y=dt)) 
