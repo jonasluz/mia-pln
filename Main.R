@@ -15,7 +15,7 @@ install.views(views="NaturalLanguageProcessing")
 ## Importando o corpus para o R.
 #
 # Forma o caminho para o arquivo corpus.txt
-cname <- file.path("/caminho")
+cname <- file.path("./data")
 fname <- file.path(cname, "corpus.txt")
 fname # exibe o caminho completo do arquivo.
 
@@ -39,58 +39,14 @@ csv <- read.csv2(csvname, header = FALSE, sep = "\t",  encoding = "UTF-8")
 # Retira duplicatas do dataframe
 lemmadf <- unique(csv)
 
-# Carrega biblioteca de processamento de strings.
-library(stringr)
-
-## Função para extrair o lema das palavras de dado documento.
-lemma <- function(x, dataframe) {
-
-    # Função interna, de substituição de determinado padrão.
-	subst <- function (x, pattern, replacement) {
-		out <- tryCatch(
-			{
-			    # Retira '.' e '*' da expressão procurada para evitar erros de regex.
-                pattern <- gsub("\\.", "", pattern, perl = TRUE)                
-                pattern <- gsub("\\*", "", pattern, perl = TRUE)
-
-				if (nchar(pattern) < 2) { 
-				    # Desconsidera padrões nulos ou de tamanho 1.
-					x
-				} else {
-				    # Redefine o padrão buscado para procurar apenas por palavra inteira.
-                    pattern <- paste0("\\b", pattern, "\\b")
-                    
-                    # Substitui todas as ocorrências encontradas.
-				    gsub(pattern, replacement, x, perl = TRUE)
-                }
-			},
-			error = function(cond) {
-				return (x)
-			}, 
-			warning = function(cond) {
-				return (x)
-			}
-		)
-		return (out)
-	}
-	
-    # Converte a entrada para a caixa baixa.
-	result <- str_to_lower(x, locale = "UTF-8")
-	
-    # Para cada linha no dataframe lematizador, faz a substituição.
-	for (i in 1:nrow(dataframe)) {
-		pattern <- str_to_lower(dataframe[[i,1]])
-		result <- subst(result, pattern, dataframe[[i,3]])
-	}
-
-    # Retorna o resultado.
-	return(result)
-} ## function lemma
+## Carrega função de lematização.
+#
+source("lemma-function.r")
 
 ## Lematizando o corpus
 #
 # Gera novo vetor de texto, lematizado.
-	ldocs <- lemma(docs, lemmadf)
+ldocs <- lemma(docs, lemmadf)
 
 # Carrega a biblioteca de mineração de texto tm
 library(tm)

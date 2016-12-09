@@ -1,3 +1,4 @@
 *.csv
 /*.png
 /corpus.txt
+/data
