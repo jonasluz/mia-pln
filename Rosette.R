@@ -4,31 +4,31 @@ library(rosetteApi)
 rosette.apiDir <- "..\\R-Binding\\R\\Api.R"
 source(rosette.apiDir)
 
-# Chave da aplicaÃ§Ã£o Rosette.
+# Chave da aplicação Rosette.
 #
 #rosette.apiKey <- "<put Rosette API Key here!"
 
-## FunÃ§Ã£o para executar uma chamada Rosette
+## Função para executar uma chamada Rosette
 #
 RosetteCall <- function(x, endpoint, extraParams = NULL) 
 {
-  params <- vector()
-  # Configura os parÃ¢metros default.
-  params[['language']] <- "por"
-  # Configura o parÃ¢metro do texto.
-  params[['content']] <- as.character(x)
-  # Configura parÃ¢metros adicionais.
-  params <- append(params, extraParams)
+  # Configura os parâmetros default.
+  params <- list(language = "por", content = x)
+  # Configura parâmetros adicionais.
+  if (!is.null(extraParams))
+  {
+    params <- append(params, extraParams)
+  }
   
-  # Faz a chamada Ã  API Rosette.
-  result <- api(rosette.apiKey, endpoint, toJSON(params))
+  # Faz a chamada à API Rosette.
+  result <- api(rosette.apiKey, endpoint, parameters = params)
 
   return(result)
 } # RosetteCall
 
 PrepareResult <- function(x, index) 
 {
-  # Prepara variÃ¡vel de resultado.
+  # Prepara variável de resultado.
   result <- list()
   result$index <- index
   result$origin <- gsub("\\s+", " ", trimws(x))
@@ -38,13 +38,13 @@ PrepareResult <- function(x, index)
 
 EntitiesFrom <- function(x, index = NULL) 
 {
-  # VariÃ¡vel de resultado.
+  # Variável de resultado.
   result <- PrepareResult(x, index)
   if (result$origin == "") return(result)
   
   # Extrai as entidades usando a API Rosette.
   data <- RosetteCall(x, "entities")
-  data.entities <- fromJSON(data)$entities
+  data.entities <- data$content$entities
   data.merged <- Reduce(function(...) merge(..., all = TRUE), data.entities)
   
   result$entities <- data.merged
@@ -54,15 +54,14 @@ EntitiesFrom <- function(x, index = NULL)
 
 PartsOfSpeech <- function(x, index = NULL) 
 {
-  # VariÃ¡vel de resultado.
+  # Variável de resultado.
   result <- PrepareResult(x, index)
   if (result$origin == "") return(result)
 
   # Extrai as partes da fala usando a API Rosette.
   data <- RosetteCall(x, "morphology", c(morphology = "parts-of-speech"))
-  data <- fromJSON(data)
-  result$tokens <- data$tokens
-  result$posTags <- data$posTags
+  result$tokens <- data$content$tokens
+  result$posTags <- data$content$posTags
   
   return(result)
-}
+} # PartsOfSpeech

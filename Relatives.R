@@ -1,21 +1,21 @@
 ## Relatives.R
 # 
-# Identifica relaÃ§Ãµes de parentesco.
+# Identifica relações de parentesco.
 #
 # ##
 
 library(stringi)
 
-## FunÃ§Ã£o para encontrar relaÃ§Ãµes.
+## Função para encontrar relações.
 # 
 FindRelations <- function(x, index = NULL) 
 {
-  ## RelaÃ§Ãµes...
+  ## Relações...
   # 
-  relations <- c("pai", "mÃ£e", "irmÃ£o", "irmÃ£", "primo", "prima", "tio", "tia", 
+  relations <- c("pai", "mãe", "irmão", "irmã", "primo", "prima", "tio", "tia", 
                  "neto", "neta", "bisneto", "bisneta", "cunhado", "cunhada", 
                  "marido", "esposo", "mulher", "esposa", "noivo", "noiva", 
-                 "namorado", "namorada", "avÃ´", "avÃ³", "bisavÃ´", "bisavÃ³", 
+                 "namorado", "namorada", "avô", "avõ", "bisavô", "bisavó", 
                  "sobrinho", "sobrinha", "sogro", "sogra", "genro", "nora",
                  "enteado", "enteada", "entiado", "entiada", # (SIC)
                  "companheiro", "companheira", "parceiro", "parceira",
@@ -24,15 +24,16 @@ FindRelations <- function(x, index = NULL)
                  "filho", "filha"
   )
   
-  # Faz a anÃ¡lise morfolÃ³gica, encontrando tokens e posTags.
+  # Faz a análise morfológica, encontrando tokens e posTags.
   #
   result <- PartsOfSpeech(x, index)
   if (result$origin == "") return(result)
   
-  # Procura por relaÃ§Ãµes de famÃ­lia na lista de tokens.
+  # Procura por relações de família na lista de tokens.
   #
   indexes <- which(result$tokens %in% relations, arr.ind = TRUE)
-  result$relations <- result$tokens[indexes]
+  relations <- result$tokens[indexes]
+  result$relations <- unique(unlist(relations))
   
   # Limpa o POS do resultado antes de retornar.
   result$tokens <- NULL
