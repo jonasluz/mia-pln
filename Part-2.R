@@ -1,6 +1,6 @@
 ## Part-2.R 
 #
-# Requer a execuÃ§Ã£o prÃ©via do Part-1.R ou leitura dos dados de ambiente R.
+# Requer a execução prévia do Part-1.R ou leitura dos dados de ambiente R.
 #
 # ##
 
@@ -8,25 +8,25 @@
 
 # Prepara a lista de documentos para tratamento.
 #
-# Retira identificaÃ§Ã£o de processos.
+# Retira identificação de processos.
 docs.clear <- sub(docs.text, pattern = "Proc: P([0-9]{6})/([0-9]{4})", replacement = "", perl=TRUE)
 # Converte para caixa baixa.
 docs.lower <- stri_trans_tolower(docs.clear)
-# Corrige pontuaÃ§Ã£o, em funÃ§Ã£o de se ter detectado erros crassos neste aspecto.
+# Corrige pontuação, em função de se ter detectado erros crassos neste aspecto.
 docs.lower <- gsub(docs.lower, pattern = "[.]", replacement = ". ", perl = TRUE, fixed = FALSE)
 docs.lower <- gsub(docs.lower, pattern = "[,]", replacement = ", ", perl = TRUE, fixed = FALSE)
 docs.lower <- gsub(docs.lower, pattern = "sr:", replacement = "sr. ", perl = TRUE)
 docs.lower <- gsub(docs.lower, pattern = "sra:", replacement = "sra. ", perl = TRUE)
-# Retira espaÃ§os extras.
+# Retira espaços extras.
 docs.lower <- gsub(trimws(docs.lower), pattern = "\\s+", replacement = " ")
 
-# Carrega ligaÃ§Ã£o e funÃ§Ãµes de uso da Rosette API.
+# Carrega ligações e funções de uso da Rosette API.
 source(".\\Rosette.R", encoding = "UTF-8")
-# Carrega funÃ§Ãµes de busca por relaÃ§Ãµes entre as pessoas.
+# Carrega funções de busca por relações entre as pessoas.
 source(".\\Relatives.R", encoding = "UTF-8")
 
-# PROCESSAMENTO DO CORPUS COM EXTRAÃ‡ÃƒO DAS ENTIDADES NOMEADAS 
-# E RELAÃ‡Ã•ES ENTRE AS PESSOAS.
+# PROCESSAMENTO DO CORPUS COM EXTRAÇÃO DAS ENTIDADES NOMEADAS 
+# E RELAÇÕES ENTRE AS PESSOAS.
 # 
 library(foreach)
 length <- length(docs.lower)
@@ -36,3 +36,17 @@ result <- foreach(i = 1 : length) %do%
             ), recursive = FALSE
          )
 # ##
+
+# GERAÇÃO DA SAÍDA EM PLANILHA XLSX.
+# @see http://www.sthda.com/english/wiki/r2excel-read-write-and-format-easily-excel-files-using-r-software
+# 
+
+# Instala o pacote necessário: r2Excel
+#
+library(rJava)
+install.packages("devtools")
+devtools::install_github("kassambara/r2excel")
+
+## Faz exportação
+#
+ExportResult(result, TRUE)
