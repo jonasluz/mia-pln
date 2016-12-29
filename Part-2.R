@@ -50,3 +50,18 @@ devtools::install_github("kassambara/r2excel")
 ## Faz exportação
 #
 ExportResult(result, TRUE)
+
+## Recupera todas as relações identificadas entre as pessoas.
+#
+result.allRelations <- unlist(lapply(FUN = function(x) {
+  if (is.null(x$relations) || length(x$relations) == 0) NA else x$relations[1]
+}, result))
+result.relations <- table(result.allRelations)
+
+## Recupera todos os nomes de pessoas identificados.
+#
+result.names <- lapply(result, function(x) {
+  if (is.null(x$entities)) return(NA)
+  entities <- data.frame(x$entities)
+  return (as.character(subset(entities, type %in% c("PERSON"))$mention))
+})

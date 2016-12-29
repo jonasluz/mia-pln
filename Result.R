@@ -43,7 +43,6 @@ ExportResult <- function(x, open = FALSE)
 
   # Adiciona registros.
   #
-  
   lapply(x, xls.workbook, xls.sheet, FUN = InsertRecord)
   
   # Salva planilha.
